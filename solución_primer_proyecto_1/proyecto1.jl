@@ -276,6 +276,18 @@ function iterate(test::Function,f::Function,z::Complex,iter::Integer, c::Complex
     return true
 end
 
+# ╔═╡ 7848fe70-59e3-11eb-20e7-b38210af2e66
+function iterate(test::Function,f::Function,z::Complex,iter::Integer, c::Complex,τ::Real)
+	for i in 1:iter
+        if test(z,τ)==false
+            return false
+        else
+            z = f(z,c)
+        end
+    end
+    return true
+end
+
 # ╔═╡ fb3a891a-4634-11eb-2228-67741e0f82e2
 md"
 + Defina un función que devuelva el número de iteraciones realizadas para un dado z (número complejo), hasta que se no se cumple el criterio de divergencia.
@@ -395,13 +407,21 @@ function setmandelbrot(
 		f::Function,
 		test::Function,
 		grid::Array{T,2} where T,
+		c::Complex,
 		iter::Integer)
 	
-end
-
-# ╔═╡ fc4feb92-3b5d-11eb-28ff-630169bd8fc2
-begin
-	
+	z₀=0+0*im
+	a = size(grid,1)
+	b = size(grid,2)
+	graph = zeros(a,b)
+        for i in 1:a
+			for j in 1:b
+				if iterate(test,f,z₀,iter,c)
+					graph[i,j] = 1.0
+				end
+			end
+		end
+	return graph
 end
 
 # ╔═╡ 847b1e16-46e3-11eb-1581-95c456a7482f
@@ -434,11 +454,27 @@ function setbiomorph(
 		iter::Integer,
 		τ::Integer)
 	
+	a = size(grid,1)
+	b = size(grid,2)
+	graph = zeros(a,b)
+        for i in 1:a
+			for j in 1:b
+				if iterate(test,f,grid[i,j],iter,c,τ)
+					graph[i,j] = 1.0
+				end
+			end
+		end
+	return graph
 end
 
 # ╔═╡ 9772cb98-469f-11eb-00b0-312e5a3b75dd
+#Testing Biomorph
+#f\_n / n = {1 2 3 4} para todas las funciones generacionales
 begin
-	
+	τ = 100
+	cᵦ = -1.0 +0.0im
+	D₃ = setbiomorph(f₁,testbiomorph,B,cᵦ,10,τ)
+	heatmap(e,f,D₃)
 end
 
 # ╔═╡ b27d4370-46e3-11eb-0b7d-fbe40c187c17
@@ -460,6 +496,19 @@ function setmandelbrot(
 		iter::Integer
 	)
 	
+end
+
+# ╔═╡ fc4feb92-3b5d-11eb-28ff-630169bd8fc2
+#Testing Mandelbroat
+begin
+	Aₘ = Grid(10.0,1.0,10.0)
+	Bₘ = makeGrid(A)
+	eₘ = -A.lim_abs:A.tam_espacio:A.lim_abs
+	fₘ = -A.lim_ord:A.tam_espacio:A.lim_ord
+	
+	cₘ = -1+0*im
+	D₂ = setmandelbrot(fc,testJM,B,cₘ,10)
+	heatmap(e,f,D₂)
 end
 
 # ╔═╡ e4797f76-40c9-11eb-02d6-35073745bec0
@@ -524,6 +573,7 @@ md"
 # ╠═6b6e04f0-4638-11eb-1401-6db76349254b
 # ╟─71f98b8a-4641-11eb-2c9c-7f49f8577365
 # ╠═c84bee02-4640-11eb-0dc2-57337e999b50
+# ╠═7848fe70-59e3-11eb-20e7-b38210af2e66
 # ╟─fb3a891a-4634-11eb-2228-67741e0f82e2
 # ╠═828790ba-39d9-11eb-03bf-cbf806cba31a
 # ╟─393b931a-46a0-11eb-361d-8da678672d65
@@ -538,7 +588,7 @@ md"
 # ╟─687d2356-463b-11eb-33a6-53321e36f77a
 # ╠═ce8536ce-469d-11eb-3f57-59b7ce9ac946
 # ╠═fc4feb92-3b5d-11eb-28ff-630169bd8fc2
-# ╟─847b1e16-46e3-11eb-1581-95c456a7482f
+# ╠═847b1e16-46e3-11eb-1581-95c456a7482f
 # ╟─e270a720-469f-11eb-1608-57230535b389
 # ╠═f4f08ecc-469f-11eb-0d11-91bbe2f63dc8
 # ╠═9772cb98-469f-11eb-00b0-312e5a3b75dd
