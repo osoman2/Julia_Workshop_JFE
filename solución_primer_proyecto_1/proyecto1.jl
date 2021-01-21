@@ -86,6 +86,12 @@ Para realizar las gráficas se utilizará el paquete Plots, por lo tanto el paqu
 # ╔═╡ 16040e00-539c-11eb-0f12-db5ae4d9970f
 Plots.default(size = (650,450))
 
+# ╔═╡ 218d86a0-59e8-11eb-06ba-25edc94b2fe3
+begin
+	s = 50
+	Plots.default(size = (2200,2200),titlefontsize = s, tickfontsize = s, legendfontsize = s, guidefontsize = s, legendtitlefontsize = s)
+end
+
 # ╔═╡ cd1023fa-3b3b-11eb-22ec-2724be9b2af8
 md"
 A continuación se mostrarán ejemplos para realizar gráficas con el paquete, los cuales pueden usarse para mostrar las formas biológicas y los conjuntos de Julia y Mandelbrot, una vez se hayan obtenido los datos necesarios.
@@ -100,7 +106,9 @@ begin
 	scatter(zcomplejo, seriescolor=:white,
 		    markerstrokecolor=:blue,
 		    aspectratio=1,
-		    title="Gráfica de ejemplo")
+		    title="Gráfica de ejemplo",
+			legend=false,
+			markersize=10)
 end
 
 # ╔═╡ 4192aa10-5962-11eb-36fb-67a13342fa95
@@ -209,6 +217,8 @@ function makeGrid(g::Grid)
 	
 end
 
+
+
 # ╔═╡ 774af954-4635-11eb-31dd-17a273bf9b15
 md"
 + Defina funciones de una línea para las formas biológicas y la familia de polinomios cuadráticos complejos 
@@ -238,7 +248,7 @@ md"
 Comprobar el criterio de convergencia para los conjuntos de Julia y Mandelbrot
 """
 function testJM(z::Complex)
-	return abs(z) < 2
+	return abs(z) <= 2
 end
 
 # ╔═╡ 5466484a-4637-11eb-115f-ab417bd2b802
@@ -374,14 +384,20 @@ end
 
 # ╔═╡ 553b382e-469e-11eb-3b55-3d189b08538c
 begin
-	A = Grid(2.0,3.0,0.2)
+	A = Grid(5.0,5.0,0.2)
 	B = makeGrid(A)
 	C = -1.0 +0.0im
 	D = setjulia(fc,testJM,B,C,10)
 	e = -A.lim_abs:A.tam_espacio:A.lim_abs
 	f = -A.lim_ord:A.tam_espacio:A.lim_ord
-	heatmap(e,f,D)
+	scatter(D,seriescolor=:white,
+		    markerstrokecolor=:blue,
+		    aspectratio=1,
+		    title="Gráfica de ejemplo",
+			legend=false,
+			markersize=10)
 end
+
 
 # ╔═╡ 639f176a-46e3-11eb-0d26-21e096ca0863
 md"
@@ -415,12 +431,13 @@ function setmandelbrot(
 	b = size(grid,2)
 	graph = zeros(a,b)
         for i in 1:a
-			for j in 1:b
-				if iterate(test,f,z₀,iter,c)
-					graph[i,j] = 1.0
-				end
+		for j in 1:b
+			if iterate(test,f,z₀,iter,c)
+				graph[i,j] = 1.0
 			end
 		end
+	end
+		
 	return graph
 end
 
@@ -474,7 +491,12 @@ begin
 	τ = 100
 	cᵦ = -1.0 +0.0im
 	D₃ = setbiomorph(f₁,testbiomorph,B,cᵦ,10,τ)
-	heatmap(e,f,D₃)
+	scatter(D₃, seriescolor=:white,
+		    markerstrokecolor=:blue,
+		    aspectratio=1,
+		    title="Testing Biomorph",
+			legend=false,
+			markersize=5)
 end
 
 # ╔═╡ b27d4370-46e3-11eb-0b7d-fbe40c187c17
@@ -501,14 +523,19 @@ end
 # ╔═╡ fc4feb92-3b5d-11eb-28ff-630169bd8fc2
 #Testing Mandelbroat
 begin
-	Aₘ = Grid(10.0,1.0,10.0)
-	Bₘ = makeGrid(A)
-	eₘ = -A.lim_abs:A.tam_espacio:A.lim_abs
-	fₘ = -A.lim_ord:A.tam_espacio:A.lim_ord
+	Aₘ = Grid(50.0 , 50.0 ,0.1)
+	Bₘ = makeGrid(Aₘ)
 	
 	cₘ = -1+0*im
-	D₂ = setmandelbrot(fc,testJM,B,cₘ,10)
-	heatmap(e,f,D₂)
+	D₂ = setmandelbrot(fc,testJM,Bₘ,cₘ,100)
+	
+	scatter(D₂, seriescolor=:white,
+		    markerstrokecolor=:blue,
+		    aspectratio=1,
+		    title="Conjunto Mandelbroat",
+			legend=false,
+			markersize=10)
+	
 end
 
 # ╔═╡ e4797f76-40c9-11eb-02d6-35073745bec0
@@ -553,6 +580,7 @@ md"
 # ╟─231273f6-3b3b-11eb-2b3b-2308e244a358
 # ╠═63b9e832-3b3b-11eb-0d45-b54bff3a4c10
 # ╠═16040e00-539c-11eb-0f12-db5ae4d9970f
+# ╠═218d86a0-59e8-11eb-06ba-25edc94b2fe3
 # ╟─cd1023fa-3b3b-11eb-22ec-2724be9b2af8
 # ╠═4070b426-3b3d-11eb-1ef2-73f2f10c9ce6
 # ╟─4192aa10-5962-11eb-36fb-67a13342fa95
@@ -565,7 +593,7 @@ md"
 # ╠═f915f344-3a00-11eb-16a9-6be5b192810c
 # ╟─f1207c62-4631-11eb-30cb-691cbcca8574
 # ╠═1dc63efc-39d6-11eb-3b8d-15da426e82a1
-# ╟─774af954-4635-11eb-31dd-17a273bf9b15
+# ╠═774af954-4635-11eb-31dd-17a273bf9b15
 # ╠═acda722e-4636-11eb-0a76-29912beacb1c
 # ╟─36bed290-4633-11eb-26fe-d15d7d6f03f8
 # ╠═60604b20-4637-11eb-1874-49e2756715ac
